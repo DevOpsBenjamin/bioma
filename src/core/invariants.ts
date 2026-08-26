@@ -49,6 +49,46 @@ export function getOrthogonalNeighbors(row: number, col: number, size: number): 
 }
 
 /**
+ * Vérifie qu'un biome forme un seul bloc continu orthogonal (4-connexité stricte, sans îles disjointes).
+ */
+export function isBiome4Connected(size: number, biomes: number[][], biomeId: number): boolean {
+  const cells: Position[] = []
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      if (biomes[r][c] === biomeId) cells.push({ row: r, col: c })
+    }
+  }
+  if (cells.length === 0) return false
+
+  const visited = new Set<string>()
+  const queue = [cells[0]]
+  visited.add(`${cells[0].row},${cells[0].col}`)
+
+  while (queue.length > 0) {
+    const curr = queue.shift()!
+    const neighbors = getOrthogonalNeighbors(curr.row, curr.col, size).filter(
+      n => biomes[n.row][n.col] === biomeId && !visited.has(`${n.row},${n.col}`)
+    )
+    for (const n of neighbors) {
+      visited.add(`${n.row},${n.col}`)
+      queue.push(n)
+    }
+  }
+
+  return visited.size === cells.length
+}
+
+/**
+ * Vérifie que les N biomes de la grille sont tous strictement 4-connexes.
+ */
+export function areAllBiomes4Connected(size: number, biomes: number[][]): boolean {
+  for (let b = 0; b < size; b++) {
+    if (!isBiome4Connected(size, biomes, b)) return false
+  }
+  return true
+}
+
+/**
  * Vérifie si une position candidate fait partie de la solution unique du puzzle (Évaluation Hardcore One-Strike).
  */
 export function isPositionInSolution(target: Position, solution: Position[]): boolean {
