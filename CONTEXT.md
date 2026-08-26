@@ -8,17 +8,17 @@
 
 | Terme | Définition & Rôle |
 | :--- | :--- |
-| **Grille ($N \times N$)** | Matrice carrée de dimensions $N \times N$ ($N$ variant de 6 à 12 dans le flux de jeu standard). |
+| **Grille ($N \times N$)** | Matrice carrée de dimensions $N \times N$ ($N$ variant de 6 à 12 dans le flux standard). |
 | **Cellule (Cell)** | Case élémentaire aux coordonnées $(r, c)$ avec $0 \le r, c < N$. |
 | **Biome (Région / Zone)** | Sous-ensemble connexe orthogonal (4-connexité stricte) de cellules partageant une identité visuelle/couleur. Une grille $N \times N$ contient exactement **$N$ biomes disjoints** (taille minimum : 2 cases par biome). |
-| **Arbre (Tree / Sujet)** | Élément principal à placer dans la grille (plante, fleur, félin, couronne selon le skin actif). |
-| **Pousse / Marqueur (Dot / Mark)** | Indicateur placé par le joueur signifiant *"Aucun arbre ne peut être planté sur cette case"*. Aide visuelle facultative. |
-| **Voisinage de Moore (8-voisins)** | Les 8 cases adjacentes orthogonales (haut, bas, gauche, droite) et diagonales entourant une cellule. |
+| **Arbre (Tree / Sujet)** | Élément principal à ancrer dans la grille. Planté délibérément via **Double-Tap** (mobile) ou Clic Droit (desktop). Une fois validé avec succès, l'arbre devient immuable et verrouillé. |
+| **Brouillon / Marqueur Souple (Soft Mark)** | Croix/marqueur translucide posé par le joueur (tap simple ou drag-to-mark) pour marquer ses déductions. Modifiable et effaçable à tout moment. |
+| **Racine / Marqueur Dur (Hard Root)** | Marqueur végétal verrouillé et non-supprimable, déployé automatiquement par un Arbre planté pour interdire les cases de son entourage selon les options de confort actives. |
+| **Options d'Auto-Enracinement** | Réglages utilisateur modulaires contrôlant le déploiement automatique des Racines à la pose d'un arbre : (1) Ligne & Colonne [Actif par défaut], (2) 8-voisins de Moore [Actif par défaut], (3) Biome entier [Inactif par défaut]. |
 | **Mode Hardcore Absolu (One-Strike)** | Règle d'évaluation stricte : la validation d'un arbre sur une case ne faisant pas partie de la **solution unique** déclenche immédiatement l'**Échec du Niveau**. |
 | **Transformation Anti-Mémorisation** | Mécanisme appliqué lors du rejeu d'un niveau échoué (rotation aléatoire 90°/180°/270°, symétrie miroir, permutation des couleurs de biomes) pour neutraliser la mémorisation spatiale brute et forcer la déduction logique. |
 | **Rythme de Progression Non-Linéaire** | Alternance dynamique des tailles de grille (ex: vagues 6x6 $\to$ 9x9 $\to$ 12x12 $\to$ 7x7 $\to$ 10x10) sur 500+ niveaux pour éviter l'épuisement mental et la monotonie. |
 | **Pause Mindful / Anti-Hyperfocus** | Message d'encouragement et d'invitation à la pause déclenché tous les 10 niveaux consécutifs. |
-| **Générateur Procédural & Solveur** | Algorithmes vérifiant qu'un puzzle admet **strictement une unique solution** avant d'être proposé. |
 
 ---
 
@@ -35,19 +35,16 @@ Pour qu'une grille de taille $N \times N$ soit résolue :
 
 ---
 
-## 3. 🎮 États d'une Cellule & Boucle de Jeu
+## 3. 🎮 États d'une Cellule & Contrôles
 
+### États d'une cellule
 - `EMPTY` : Case neutre, inexplorée.
-- `MARK` : Case marquée par le joueur (croix / graine / galet) pour éliminer cette position (aide optionnelle).
-- `TREE` : Case où un arbre est planté et validé.
-  - Si la case fait partie de la **solution unique** $\to$ Arbre ancré avec succès.
-  - Si la case ne fait pas partie de la solution $\to$ **Échec Immédiat du Niveau** (One-Strike).
+- `SOFT_MARK` : Brouillon libre posé par le joueur (tap simple ou drag).
+- `TREE` : Arbre validé et verrouillé.
+- `HARD_ROOT` : Racine immuable déployée par un arbre (non-effaçable).
 
----
-
-## 4. 🔄 Boucle d'Échec et Anti-Mémorisation
-
-Lorsqu'un niveau échoue :
-1. L'état actuel de la grille est gelé avec un feedback visuel zen mais sans appel ("Échec de l'Harmonie").
-2. Le joueur est redirigé vers l'accueil ou le menu des niveaux pour casser la rétention de mémoire à court terme.
-3. À la relance du niveau, la matrice sous-jacente subit une transformation isométrique aléatoire (rotation $\in \{0^\circ, 90^\circ, 180^\circ, 270^\circ\}$, inversion axiale) et les couleurs des biomes sont permutées aléatoirement : la structure logique reste rigoureusement identique, mais le cerveau doit reconstruire le raisonnement logique sans pouvoir recopier visuellement son coup précédent.
+### Interactions & Gestuelle
+- **Double-Tap (300ms) / Clic Droit** : Planter un Arbre (`TREE`). Évalue immédiatement la solution (Hardcore : échec si non valide, ancrage permanent si valide).
+- **Tap Simple & Drag-to-mark** : Poser / Effacer des brouillons (`SOFT_MARK`). Glisser depuis une case vide remplit de brouillons ; glisser depuis un brouillon les efface.
+- **Bouton Gomme 🧹** : Nettoie instantanément tous les brouillons (`SOFT_MARK`) sans toucher aux arbres ni aux racines.
+- **Grille Statique Épurée** : Pas de surbrillance distrayante des lignes/colonnes au toucher.
