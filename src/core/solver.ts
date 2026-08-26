@@ -149,10 +149,12 @@ export function solvePuzzle(
     }
 
     // Éliminer dans le biome
-    for (const cell of biomeCells[biome]) {
-      if ((cell.row !== row || cell.col !== col) && cands[cell.row][cell.col]) {
-        cands[cell.row][cell.col] = false
-        modified = true
+    if (biomeCells[biome]) {
+      for (const cell of biomeCells[biome]) {
+        if ((cell.row !== row || cell.col !== col) && cands[cell.row][cell.col]) {
+          cands[cell.row][cell.col] = false
+          modified = true
+        }
       }
     }
 
