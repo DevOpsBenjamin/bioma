@@ -15,14 +15,15 @@
 | **Brouillon / Marqueur Souple (Soft Mark)** | Croix/marqueur translucide posé par le joueur (tap simple ou drag-to-mark) pour marquer ses déductions. Modifiable et effaçable à tout moment. |
 | **Racine / Marqueur Dur (Hard Root)** | Marqueur végétal verrouillé et non-supprimable, déployé automatiquement par un Arbre planté pour interdire les cases de son entourage selon les options de confort actives. |
 | **Options d'Auto-Enracinement** | Réglages utilisateur modulaires contrôlant le déploiement automatique des Racines à la pose d'un arbre : (1) Ligne & Colonne [Actif par défaut], (2) 8-voisins de Moore [Actif par défaut], (3) Biome entier [Inactif par défaut]. |
-| **Solveur de Contraintes (CSP Engine)** | Algorithme de propagation de contraintes (cases forcées, exclusions croisées) et de backtracking avec arrêt précoce à $S=2$ (prouve l'unicité stricte de la solution). |
-| **Générateur Procédural CLI** | Outil autonome de génération hors-ligne (`pnpm generate:levels`) construisant $N$ arbres valides puis étendant simultanément les biomes 4-connexes avant certification par le solveur. |
-| **Score de Profondeur de Déduction** | Métrique de difficulté mathématique mesurant le niveau de projection logique requis pour résoudre le puzzle (Doux/Relax, Équilibré/Moyen, Profond/Difficile), décorrelé de la taille de grille $N \times N$. |
+| **Campagne des Biomes (V1 Focus)** | Mode de jeu principal de la V1 constitué d'un parcours de 500+ niveaux non-linéaires alternant les tailles de grille (6x6 à 12x12) sous 3 filtres d'intensité (Doux / Équilibré / Profond). |
+| **Étoile Parfaite (One-Shot Star ⭐)** | Récompense d'excellence unique accordée si et seulement si le niveau est résolu **du premier coup sans aucun échec**. En cas d'erreur/reset, l'étoile de ce niveau est **définitivement perdue**. |
+| **Rang d'Harmonie** | Titre honorifique final attribué au joueur à l'issue des 500+ niveaux, calculé d'après le nombre total d'Étoiles Parfaites One-Shot cumulées. |
+| **Moteur de Persistance IndexedDB** | Couche de stockage local asynchrone robuste (V1 offline) gérant l'état des niveaux, étoiles et réglages, avec outil d'Export / Import JSON et architecture prête pour synchronisation cloud future. |
+| **Pause Mindful / Anti-Hyperfocus** | Message d'encouragement et d'invitation à la pause déclenché tous les 10 niveaux consécutifs. |
+| **Solveur de Contraintes (CSP Engine)** | Algorithme de propagation de contraintes et backtracking à arrêt précoce à $S=2$ certifiant l'unicité stricte de la solution. |
 | **Catalogue Pré-Généré** | Fichier JSON compact embarqué dans l'application contenant les 500+ grilles certifiées pour un chargement instantané à 0 ms. |
 | **Mode Hardcore Absolu (One-Strike)** | Règle d'évaluation stricte : la validation d'un arbre sur une case ne faisant pas partie de la **solution unique** déclenche immédiatement l'**Échec du Niveau**. |
 | **Transformation Anti-Mémorisation** | Mécanisme appliqué lors du rejeu d'un niveau échoué (rotation aléatoire 90°/180°/270°, symétrie miroir, permutation des couleurs de biomes) pour neutraliser la mémorisation spatiale brute et forcer la déduction logique. |
-| **Rythme de Progression Non-Linéaire** | Alternance dynamique des tailles de grille (ex: vagues 6x6 $\to$ 9x9 $\to$ 12x12 $\to$ 7x7 $\to$ 10x10) organisée par paliers d'intensité logique. |
-| **Pause Mindful / Anti-Hyperfocus** | Message d'encouragement et d'invitation à la pause déclenché tous les 10 niveaux consécutifs. |
 
 ---
 
