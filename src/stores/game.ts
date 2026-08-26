@@ -12,6 +12,22 @@ import {
   type LevelProgress
 } from '../storage/indexedDb'
 import { useSettingsStore } from './settings'
+import {
+  hapticSoftMark,
+  hapticTreePlant,
+  hapticRootsDeploy,
+  hapticFail,
+  hapticVictory,
+  hapticEraser
+} from '../utils/haptics'
+import {
+  playSoftMarkSound,
+  playTreePlantSound,
+  playRootsDeploySound,
+  playFailSound,
+  playVictoryFanfare,
+  playEraserSound
+} from '../audio/soundEngine'
 import type { Grid, Position, PuzzleDefinition } from '../core/types'
 
 const campaignLevels = campaignData as CompactLevel[]
@@ -120,23 +136,35 @@ export const useGameStore = defineStore('game', () => {
     if (cell.state === 'TREE' || cell.state === 'HARD_ROOT') return
 
     cell.state = cell.state === 'SOFT_MARK' ? 'EMPTY' : 'SOFT_MARK'
+    playSoftMarkSound()
+    hapticSoftMark()
   }
 
   function setSoftMark(row: number, col: number, state: boolean) {
     if (gameState.value !== 'PLAYING' || !grid.value) return
     const cell = grid.value.cells[row][col]
     if (cell.state === 'TREE' || cell.state === 'HARD_ROOT') return
-    cell.state = state ? 'SOFT_MARK' : 'EMPTY'
+    if (cell.state !== (state ? 'SOFT_MARK' : 'EMPTY')) {
+      cell.state = state ? 'SOFT_MARK' : 'EMPTY'
+      playSoftMarkSound()
+      hapticSoftMark()
+    }
   }
 
   function clearAllSoftMarks() {
     if (gameState.value !== 'PLAYING' || !grid.value) return
+    let cleared = false
     for (let r = 0; r < grid.value.size; r++) {
       for (let c = 0; c < grid.value.size; c++) {
         if (grid.value.cells[r][c].state === 'SOFT_MARK') {
           grid.value.cells[r][c].state = 'EMPTY'
+          cleared = true
         }
       }
+    }
+    if (cleared) {
+      playEraserSound()
+      hapticEraser()
     }
   }
 
@@ -161,6 +189,9 @@ export const useGameStore = defineStore('game', () => {
       existingProgress.attempts++
       existingProgress.hasOneShotStar = false // Étoile perdue à jamais sur ce niveau
 
+      playFailSound()
+      hapticFail()
+
       progressMap.value[levelId] = existingProgress
       await saveLevelProgress(existingProgress)
       return
@@ -168,9 +199,13 @@ export const useGameStore = defineStore('game', () => {
 
     // 🌲 ARBRE VALIDE ANCRÉ !
     cell.state = 'TREE'
+    playTreePlantSound()
+    hapticTreePlant()
 
     // Déploiement automatique des Racines Végétales
     deployRootsAroundTree({ row, col })
+    playRootsDeploySound()
+    hapticRootsDeploy()
 
     // Vérifier la victoire
     const plantedTrees: Position[] = []
@@ -189,6 +224,9 @@ export const useGameStore = defineStore('game', () => {
       if (sessionWins.value % 10 === 0) {
         showMindfulBreak.value = true
       }
+
+      playVictoryFanfare()
+      hapticVictory()
 
       const elapsedSeconds = Math.round((Date.now() - levelStartTime.value) / 1000)
       existingProgress.completed = true
