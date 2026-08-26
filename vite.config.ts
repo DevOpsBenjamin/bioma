@@ -39,5 +39,9 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  // @ts-expect-error vitest config
+  test: {
+    environment: 'happy-dom'
   }
 })
