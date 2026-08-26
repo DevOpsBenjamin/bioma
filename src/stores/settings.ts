@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { getStoredSettings, saveStoredSettings, type UserSettings } from '../storage/indexedDb'
+import { setHapticsEnabled } from '../utils/haptics'
+import { setSoundEnabled } from '../audio/soundEngine'
 
 export const useSettingsStore = defineStore('settings', () => {
   const autoRootsRowCol = ref(true)
@@ -19,6 +21,8 @@ export const useSettingsStore = defineStore('settings', () => {
       hapticsEnabled.value = stored.hapticsEnabled
       soundEnabled.value = stored.soundEnabled
       colorblindMode.value = stored.colorblindMode
+      setHapticsEnabled(stored.hapticsEnabled)
+      setSoundEnabled(stored.soundEnabled)
     }
   }
 
@@ -54,11 +58,13 @@ export const useSettingsStore = defineStore('settings', () => {
 
   function toggleHaptics() {
     hapticsEnabled.value = !hapticsEnabled.value
+    setHapticsEnabled(hapticsEnabled.value)
     persist()
   }
 
   function toggleSound() {
     soundEnabled.value = !soundEnabled.value
+    setSoundEnabled(soundEnabled.value)
     persist()
   }
 
