@@ -11,9 +11,12 @@
 | **Grille ($N \times N$)** | Matrice carrée de dimensions $N \times N$ ($N$ variant de 6 à 12 dans le catalogue standard). |
 | **Cellule (Cell)** | Case élémentaire aux coordonnées $(r, c)$ avec $0 \le r, c < N$. |
 | **Biome (Région / Zone)** | Sous-ensemble connexe orthogonal (4-connexité stricte) de cellules partageant une identité visuelle/couleur. Une grille $N \times N$ contient exactement **$N$ biomes disjoints** (taille minimum : 2 cases par biome). |
-| **Arbre (Tree / Sujet)** | Élément principal à ancrer dans la grille. Planté délibérément via **Double-Tap** (mobile) ou Clic Droit (desktop). Une fois validé avec succès, l'arbre devient immuable et verrouillé. |
+| **Arbre (Tree / Sujet)** | Élément principal de l'identité végétale de Bioma. Planté délibérément via **Double-Tap** (mobile) ou Clic Droit (desktop). Une fois validé avec succès, l'arbre devient immuable et verrouillé. |
 | **Brouillon / Marqueur Souple (Soft Mark)** | Croix/marqueur translucide posé par le joueur (tap simple ou drag-to-mark) pour marquer ses déductions. Modifiable et effaçable à tout moment. |
 | **Racine / Marqueur Dur (Hard Root)** | Marqueur végétal verrouillé et non-supprimable, déployé automatiquement par un Arbre planté pour interdire les cases de son entourage selon les options de confort actives. |
+| **Motifs d'Accessibilité (Colorblind Textures)** | Textures et motifs géométriques subtils (points, hachures, vagues, quadrillage) superposés aux 12 couleurs de biomes pour garantir la distinction des zones sans dépendre de la perception des couleurs. |
+| **Moteur Haptique Mobile** | Déclenchement de pulsations tactiles précises via `navigator.vibrate` (double-tap d'ancrage, déploiement des racines, victoire), débrayable dans les réglages. |
+| **Moteur Web Audio Discret** | Synthèse audio en temps réel sans fichier externe : micro-tic sur brouillon, son d'ancrage et bruissement végétal sur déploiement des racines, son d'échec feutré. |
 | **Options d'Auto-Enracinement** | Réglages utilisateur modulaires contrôlant le déploiement automatique des Racines à la pose d'un arbre : (1) Ligne & Colonne [Actif par défaut], (2) 8-voisins de Moore [Actif par défaut], (3) Biome entier [Inactif par défaut]. |
 | **Campagne des Biomes (V1 Focus)** | Mode de jeu principal de la V1 constitué d'un parcours de 500+ niveaux non-linéaires alternant les tailles de grille (6x6 à 12x12) sous 3 filtres d'intensité (Doux / Équilibré / Profond). |
 | **Étoile Parfaite (One-Shot Star ⭐)** | Récompense d'excellence unique accordée si et seulement si le niveau est résolu **du premier coup sans aucun échec**. En cas d'erreur/reset, l'étoile de ce niveau est **définitivement perdue**. |
