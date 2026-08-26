@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { generateTreePlacement, generateBiomesFromSeeds, generatePuzzle } from '@/core/generator'
-import { validateBoard, areMooreNeighbors } from '@/core/invariants'
+import { validateBoard, areMooreNeighbors, areAllBiomes4Connected } from '@/core/invariants'
 import { solvePuzzle } from '@/core/solver'
 
-describe('Procedural Generator', () => {
+describe('Procedural Generator with Strict 4-Connectivity', () => {
   it('generates valid non-touching tree placements for different grid sizes', () => {
     for (const size of [6, 7, 8, 9, 10, 11, 12]) {
       const trees = generateTreePlacement(size)
@@ -38,16 +38,17 @@ describe('Procedural Generator', () => {
       }
     }
 
-    // Check each seed has its own biome
-    for (let i = 0; i < size; i++) {
-      expect(biomes[seeds[i].row][seeds[i].col]).toBe(i)
-    }
+    // Check strict 4-connectivity
+    expect(areAllBiomes4Connected(size, biomes)).toBe(true)
   })
 
-  it('generates a complete puzzle guaranteed to have a single unique solution', () => {
+  it('generates a complete puzzle guaranteed to have a single unique solution and 100% 4-connected biomes', () => {
     const puzzle = generatePuzzle(6, 'test-level-1')
     expect(puzzle).not.toBeNull()
     expect(puzzle!.size).toBe(6)
+
+    // Verify all biomes are strictly 4-connected
+    expect(areAllBiomes4Connected(puzzle!.size, puzzle!.biomes)).toBe(true)
 
     // Verify solver confirms single solution
     const solveCheck = solvePuzzle(puzzle!.size, puzzle!.biomes, 2)
