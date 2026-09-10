@@ -45,6 +45,14 @@ function getCellBorders(row: number, col: number) {
 function handlePointerDown(row: number, col: number, event: PointerEvent) {
   if (event.button !== 0) return // Seul le clic gauche / touch principal
 
+  if (event.target && 'releasePointerCapture' in (event.target as Element)) {
+    try {
+      ;(event.target as Element).releasePointerCapture(event.pointerId)
+    } catch {
+      // Ignorer si capture non active
+    }
+  }
+
   const now = Date.now()
   const isDoubleTap = now - lastTapTime.value < 320 && lastTapRow.value === row && lastTapCol.value === col
 
@@ -77,6 +85,28 @@ function handlePointerEnter(row: number, col: number) {
   gameStore.setSoftMark(row, col, dragTargetState.value)
 }
 
+function handlePointerMove(event: PointerEvent) {
+  if (!isDragging.value || dragTargetState.value === null) return
+
+  if (event.target && 'releasePointerCapture' in (event.target as Element)) {
+    try {
+      ;(event.target as Element).releasePointerCapture(event.pointerId)
+    } catch {
+      // Ignorer si capture non active
+    }
+  }
+
+  const el = document.elementFromPoint(event.clientX, event.clientY)
+  const cellEl = el?.closest('[data-row]') as HTMLElement | null
+  if (cellEl && cellEl.dataset.row !== undefined && cellEl.dataset.col !== undefined) {
+    const r = parseInt(cellEl.dataset.row, 10)
+    const c = parseInt(cellEl.dataset.col, 10)
+    if (!isNaN(r) && !isNaN(c)) {
+      gameStore.setSoftMark(r, c, dragTargetState.value)
+    }
+  }
+}
+
 function handlePointerUp() {
   isDragging.value = false
   dragTargetState.value = null
@@ -89,7 +119,12 @@ function handleContextMenu(row: number, col: number) {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center w-full select-none" @pointerup="handlePointerUp" @pointercancel="handlePointerUp">
+  <div
+    class="flex flex-col items-center justify-center w-full select-none"
+    @pointermove="handlePointerMove"
+    @pointerup="handlePointerUp"
+    @pointercancel="handlePointerUp"
+  >
     <!-- SVG Pattern Definitions pour le daltonisme -->
     <PatternDefs />
 

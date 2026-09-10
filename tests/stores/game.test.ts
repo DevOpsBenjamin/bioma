@@ -106,4 +106,42 @@ describe('Game Store & Hardcore Loop', () => {
     expect(game.activeTransform).not.toBe('none')
     expect(game.gameState).toBe('PLAYING')
   })
+
+  it('correctly records completion without star after failing once', async () => {
+    const game = useGameStore()
+    game.loadLevel(1)
+
+    const solution = game.activePuzzle!.solution
+    let invalidR = 0
+    let invalidC = 0
+    for (let r = 0; r < game.grid!.size; r++) {
+      for (let c = 0; c < game.grid!.size; c++) {
+        if (!solution.some(p => p.row === r && p.col === c)) {
+          invalidR = r
+          invalidC = c
+          break
+        }
+      }
+    }
+
+    // Fail first
+    await game.plantTree(invalidR, invalidC)
+    expect(game.gameState).toBe('FAILED')
+    expect(game.hasStar(1)).toBe(false)
+    expect(game.isCompleted(1)).toBe(false)
+
+    // Retry level
+    game.retryCurrentLevel()
+    expect(game.gameState).toBe('PLAYING')
+
+    // Complete correctly
+    const currentSolution = game.activePuzzle!.solution
+    for (const tree of currentSolution) {
+      await game.plantTree(tree.row, tree.col)
+    }
+
+    expect(game.gameState).toBe('WON')
+    expect(game.isCompleted(1)).toBe(true)
+    expect(game.hasStar(1)).toBe(false)
+  })
 })

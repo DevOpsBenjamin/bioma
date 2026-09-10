@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { X, Volume2, Vibrate, Eye, Download, Upload, Check, Trees, Shield } from 'lucide-vue-next'
+import { ref, onMounted } from 'vue'
+import { X, Volume2, Vibrate, Eye, Download, Upload, Check, Trees, Shield, Smartphone } from 'lucide-vue-next'
 import { useSettingsStore } from '../../stores/settings'
 import { useGameStore } from '../../stores/game'
 
@@ -15,6 +15,28 @@ const exportSuccess = ref(false)
 const importSuccess = ref(false)
 const importError = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
+
+// Support PWA Installation
+const deferredPrompt = ref<any>(null)
+const isPwaInstallable = ref(false)
+
+onMounted(() => {
+  window.addEventListener('beforeinstallprompt', (e: Event) => {
+    e.preventDefault()
+    deferredPrompt.value = e
+    isPwaInstallable.value = true
+  })
+})
+
+async function handleInstallPwa() {
+  if (!deferredPrompt.value) return
+  deferredPrompt.value.prompt()
+  const choiceResult = await deferredPrompt.value.userChoice
+  if (choiceResult.outcome === 'accepted') {
+    isPwaInstallable.value = false
+  }
+  deferredPrompt.value = null
+}
 
 async function handleExport() {
   const json = await gameStore.exportBackup()
@@ -164,7 +186,22 @@ async function handleFileSelected(event: Event) {
           </div>
         </section>
 
-        <!-- 3. Sauvegarde & Restauration -->
+        <!-- 3. Installation PWA -->
+        <section v-if="isPwaInstallable" class="space-y-3">
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-400">
+            <Smartphone class="w-4 h-4" />
+            <span>Application PWA</span>
+          </div>
+          <button
+            class="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-emerald-950 font-bold text-xs shadow-lg active:scale-98 transition-all cursor-pointer"
+            @click="handleInstallPwa"
+          >
+            <Smartphone class="w-4 h-4" />
+            <span>Installer l'application sur mon écran d'accueil</span>
+          </button>
+        </section>
+
+        <!-- 4. Sauvegarde & Restauration -->
         <section class="space-y-3">
           <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-400">
             <Shield class="w-4 h-4" />

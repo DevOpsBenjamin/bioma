@@ -76,11 +76,12 @@ export async function getAllProgress(): Promise<Record<number, LevelProgress>> {
 export async function saveLevelProgress(progress: LevelProgress): Promise<void> {
   if (typeof indexedDB === 'undefined') return
   try {
+    const plainProgress = JSON.parse(JSON.stringify(progress))
     const db = await openDatabase()
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_PROGRESS, 'readwrite')
       const store = tx.objectStore(STORE_PROGRESS)
-      const request = store.put(progress)
+      const request = store.put(plainProgress)
 
       request.onsuccess = () => resolve()
       request.onerror = () => reject(request.error)
@@ -115,11 +116,12 @@ export async function getStoredSettings(): Promise<UserSettings | null> {
 export async function saveStoredSettings(settings: UserSettings): Promise<void> {
   if (typeof indexedDB === 'undefined') return
   try {
+    const plainSettings = JSON.parse(JSON.stringify(settings))
     const db = await openDatabase()
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_SETTINGS, 'readwrite')
       const store = tx.objectStore(STORE_SETTINGS)
-      const request = store.put({ key: 'user_settings', data: settings })
+      const request = store.put({ key: 'user_settings', data: plainSettings })
 
       request.onsuccess = () => resolve()
       request.onerror = () => reject(request.error)
