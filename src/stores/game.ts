@@ -176,12 +176,15 @@ export const useGameStore = defineStore('game', () => {
     const levelId = currentLevelNumber.value
     const isSolution = activePuzzle.value.solution.some(p => p.row === row && p.col === col)
 
-    const existingProgress = progressMap.value[levelId] || {
-      levelId,
-      completed: false,
-      hasOneShotStar: true,
-      attempts: 0
-    }
+    const existing = progressMap.value[levelId]
+    const existingProgress: LevelProgress = existing
+      ? { ...existing }
+      : {
+          levelId,
+          completed: false,
+          hasOneShotStar: true,
+          attempts: 0
+        }
 
     if (!isSolution) {
       // 💥 ÉCHEC HARDCORE ONE-STRIKE !
